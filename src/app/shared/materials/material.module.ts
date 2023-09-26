@@ -5,9 +5,11 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   exports: [
@@ -16,6 +18,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
+    MatTooltipModule,
+    MatMenuModule,
   ],
   declarations: [],
   providers: [

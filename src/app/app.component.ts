@@ -1,6 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
-import { fromEvent, map } from 'rxjs';
+import { Component, OnInit, inject } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, fromEvent, map } from 'rxjs';
 import { MenuItem, menuItems } from './shared/models/menu';
 
 export const SCROLL_CONTAINER = 'mat-sidenav-content';
@@ -17,16 +18,32 @@ export class AppComponent implements OnInit {
   popText = false;
   applyShadow = false;
   itemsMenu: MenuItem[] = menuItems;
+  menuName = '';
+  private breakpointObserver: BreakpointObserver;
+  private route: Router;
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor() {
+    this.breakpointObserver = inject(BreakpointObserver);
+    this.route = inject(Router);
+  }
 
   ngOnInit(): void {
     const content = document.getElementsByClassName(SCROLL_CONTAINER)[0];
 
     fromEvent(content, 'scroll')
       .pipe(map(() => content.scrollTop))
-      .subscribe({
-        next: (value: number) => this.determineHeader(value),
+      .subscribe((value: number) => this.determineHeader(value));
+
+    this.route.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event) => event as NavigationEnd)
+      )
+      .subscribe((event: NavigationEnd) => {
+        let moduleName = event.url.split('/')[1];
+        this.menuName = this.itemsMenu.filter(
+          (item) => item.link === `/${moduleName}`
+        )[0]?.label;
       });
   }
 
