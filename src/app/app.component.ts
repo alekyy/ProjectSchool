@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, inject } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, fromEvent, map } from 'rxjs';
 import { MenuItem, menuItems } from './shared/models/menu';
 
@@ -19,13 +19,11 @@ export class AppComponent implements OnInit {
   applyShadow = false;
   itemsMenu: MenuItem[] = menuItems;
   menuName = '';
-  private breakpointObserver: BreakpointObserver;
-  private route: Router;
+  private breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private route: Router = inject(Router);
+  private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
 
-  constructor() {
-    this.breakpointObserver = inject(BreakpointObserver);
-    this.route = inject(Router);
-  }
+  constructor() {}
 
   ngOnInit(): void {
     const content = document.getElementsByClassName(SCROLL_CONTAINER)[0];
@@ -35,15 +33,10 @@ export class AppComponent implements OnInit {
       .subscribe((value: number) => this.determineHeader(value));
 
     this.route.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map((event) => event as NavigationEnd)
-      )
-      .subscribe((event: NavigationEnd) => {
-        let moduleName = event.url.split('/')[1];
-        this.menuName = this.itemsMenu.filter(
-          (item) => item.link === `/${moduleName}`
-        )[0]?.label;
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.menuName =
+          this.activatedRoute.firstChild?.snapshot.routeConfig?.path ?? '';
       });
   }
 

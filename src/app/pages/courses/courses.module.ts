@@ -5,9 +5,10 @@ import { CoursesdMaterialModule } from '@app/shared/materials/courses-material.m
 import { SharedModule } from '@app/shared/shared.module';
 import { CoursesRoutingModule } from './courses-routing.module';
 import { CoursesComponent } from './courses.component';
+import { CourseListComponent } from './course-list/course-list.component';
 
 @NgModule({
-  declarations: [CoursesComponent],
+  declarations: [CoursesComponent, CourseListComponent],
   imports: [
     CommonModule,
     CoursesRoutingModule,
