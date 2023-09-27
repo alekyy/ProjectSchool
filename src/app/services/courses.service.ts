@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Course } from '@app/shared/models/course';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -12,23 +12,42 @@ export class CoursesService {
 
   constructor(private http: HttpClient) {}
 
-  getCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseURL}`);
+  getCourses(
+    currentPage: number,
+    pageSize: number,
+    search: string,
+    category: string
+  ): Observable<HttpResponse<any>> {
+    let url = `${this.baseURL}?_page${currentPage}&_limit=${pageSize}`;
+
+    if (category) {
+      url = `${url}&category=${category}`;
+    }
+
+    if (search) {
+      url = `${url}&q=${search}`;
+    }
+
+    return this.http
+      .get<Course[]>(`${url}`, { observe: 'response' })
+      .pipe(take(1));
   }
 
   getCoursesById(id: number): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseURL}/${id}`);
+    return this.http.get<Course[]>(`${this.baseURL}/${id}`).pipe(take(1));
   }
 
   postCourse(course: Course): Observable<Course[]> {
-    return this.http.post<Course[]>(`${this.baseURL}`, course);
+    return this.http.post<Course[]>(`${this.baseURL}`, course).pipe(take(1));
   }
 
   putCourse(course: Course, id: number): Observable<Course[]> {
-    return this.http.put<Course[]>(`${this.baseURL}/${id}`, course);
+    return this.http
+      .put<Course[]>(`${this.baseURL}/${id}`, course)
+      .pipe(take(1));
   }
 
   deleteCourse(id: number): Observable<Course[]> {
-    return this.http.delete<Course[]>(`${this.baseURL}/${id}`);
+    return this.http.delete<Course[]>(`${this.baseURL}/${id}`).pipe(take(1));
   }
 }
